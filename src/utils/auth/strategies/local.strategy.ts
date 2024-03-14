@@ -12,21 +12,14 @@ const LocalStrategy = new Strategy(options, async (email, password, next) => {
     const user: User = (await service.findByEmail(email)) as unknown as User
     if (user) {
       const isMatch = await bcrypt.compare(password, user.password)
-      //console.log('ERROOOOR')
-      //delete user.password
-      const userObject = (user as any).toJSON()
-      delete userObject.password
+      delete user.password
       if (isMatch) {
-        next(null, userObject)
+        next(null, user)
       } else {
         next(boom.unauthorized(), false)
       }
-    } else {
-      next(boom.unauthorized(), false)
-      //console.log('ERRORR2')
-    }
+    } else next(boom.unauthorized(), false)
   } catch (error) {
-    //console.log('ERROOOOOR3')
     next(error, false)
   }
 })

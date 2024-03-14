@@ -12,14 +12,13 @@ router.post(
   '/login',
   passport.authenticate('local', { session: false }),
   async (req: RequestType, res, next) => {
-    //console.log('login')
     try {
       const { user } = req
-      //sub es el id del usuario que se suscribio
+      //sub is the id of the subscribed user
       const payload = { sub: user.id }
+      const dbUser = await service.findByEmail(user.email)
       const token = jwt.sign(payload, config.jwtSecret)
-      //res.status(200).json({ message: 'Todo bien (Y)' })
-      res.status(200).json({ user, token })
+      res.status(200).json({ user: dbUser.toClient(), token })
     } catch (error) {
       console.log(error)
       next(error)

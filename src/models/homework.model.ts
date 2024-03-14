@@ -1,5 +1,8 @@
 import { Schema, model } from 'mongoose'
 import { Homework, HomeworkModel } from '../types/homework.type'
+import { USER_REFERENCE } from './user.model'
+
+export const HOMEWORK_REFERENCE = 'Homework'
 
 const Homeworks = new Schema<Homework, HomeworkModel>({
     name: {
@@ -28,7 +31,16 @@ const Homeworks = new Schema<Homework, HomeworkModel>({
         type: String,
         required: false,
         trim: true
+    },
+    status:{
+        type: String,
+        required: false,
+        trim: true
+    },
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: USER_REFERENCE
     }
 })
 
-export default model('Homework', Homeworks)
+export default model(HOMEWORK_REFERENCE, Homeworks)

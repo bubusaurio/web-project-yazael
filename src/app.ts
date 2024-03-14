@@ -26,7 +26,7 @@ app.use(express.json())
 routerApi(app)
 
 app.get('/', (req, res) => {
-  res.send('Hello World')
+  res.send('Proyecto Web Yazael')
 })
 
 app.listen(port, () => {

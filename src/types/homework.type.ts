@@ -1,4 +1,5 @@
 import type { Model } from 'mongoose'
+import { User } from './user.type'
 
 export type Homework = {
     id?: string
@@ -7,6 +8,8 @@ export type Homework = {
     description?: string 
     dateAssignment?: string
     deadline?: string
+    status?: string
+    user: User
 
 }
 
