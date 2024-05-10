@@ -11,6 +11,7 @@ import routerApi from './routes'
 import { config } from './config/config'
 import passport from 'passport'
 import './utils/auth'
+import cors from 'cors'
 
 const { mongoUri, port } = config
 
@@ -28,6 +29,8 @@ routerApi(app)
 app.get('/', (req, res) => {
   res.send('Proyecto Web Yazael')
 })
+
+app.use(cors())
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`)

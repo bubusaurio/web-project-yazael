@@ -52,7 +52,7 @@ router.get('/id', async (req, res, next) => {
   }
 })
 
-router.get('/all', async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
       const users = await service.findAll();
       res.status(200).json(users);

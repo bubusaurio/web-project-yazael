@@ -12,7 +12,7 @@ class HomeworkService {
             console.log('Could not save category', error)
         })
 
-        const existingHomework = await this.findById((newHomework as any)._id)
+        const existingHomework = await this.findById((newHomework as any).id)
 
         return existingHomework.populate([{ path: 'user', strictPopulate: false }])
     }
@@ -30,6 +30,21 @@ class HomeworkService {
 
         return homeworks
     }
+
+    async findFirst() {
+        const homeworks = await Homeworks.find().
+        populate([{ path: 'user', strictPopulate: false }]).
+        catch((error) => {
+            console.log('Error while connecting to the DB', error)
+        })
+
+        if (!homeworks) {
+            throw boom.notFound('There are not categories')
+        }
+
+        return homeworks[0]
+    }
+
 
     async findById(id: string) {
         const homework = await Homeworks.findById(id).catch((error) => {

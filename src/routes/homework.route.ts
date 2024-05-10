@@ -12,7 +12,8 @@ router.post(
   '/',
   passport.authenticate('jwt', { session: false }),
   async (req: JwtRequestType, res) => {
-    const {user: {sub}} = req
+    const {user: { sub } }= req
+    console.log(sub)
     const homework: Homework = req.body
     const newHomework = await service.create(homework, sub as unknown as ObjectId)
 
@@ -25,7 +26,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   async (req: JwtRequestType, res, next) => {
     try {
-      const { user } = req
+      const { user}   = req
       console.log(user)
       const homeworks = await service.findAll()
       res.status(200).json(homeworks)
@@ -35,6 +36,35 @@ router.get(
     }
   }
 )
+
+router.get(
+  '/findFirst',
+  async (req, res, next) => {
+    try {
+      const homeworks = await service.findFirst();
+      res.status(200).json(homeworks);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+);
+
+// router.get(
+//   '/findFirst',
+//   passport.authenticate('jwt', {session:false}),
+//   async (req: JwtRequestType, res, next) => {
+//     try {
+//       const { user}  = req
+//       console.log(user)
+//       const homeworks = await service.findFirst()
+//       res.status(200).json(homeworks)
+//     } catch (error) {
+//       console.log(error)
+//       next(error)
+//     }
+//   }
+// )
 
 router.get(
   '/:id',
@@ -54,7 +84,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   async (req, res, next) => {
     try {
-      const homework = await service.findById(req.query.name as string)
+      const homework = await service.findByName(req.params.name)
       res.status(200).json(homework)
     } catch (error) {
       next(error)
