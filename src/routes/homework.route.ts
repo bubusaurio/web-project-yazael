@@ -21,21 +21,35 @@ router.post(
   }
 )
 
+// router.get(
+//   '/',
+//   passport.authenticate('jwt', { session: false }),
+//   async (req: JwtRequestType, res, next) => {
+//     try {
+//       const { user}   = req
+//       console.log(user)
+//       const homeworks = await service.findAll()
+//       res.status(200).json(homeworks)
+//     } catch (error) {
+//       console.log(error)
+//       next(error)
+//     }
+//   }
+// )
+
 router.get(
   '/',
   passport.authenticate('jwt', { session: false }),
   async (req: JwtRequestType, res, next) => {
     try {
-      const { user}   = req
-      console.log(user)
-      const homeworks = await service.findAll()
-      res.status(200).json(homeworks)
+      const { sub } = req.user;
+      const homeworks = await service.findByUser(sub);
+      res.status(200).json(homeworks);
     } catch (error) {
-      console.log(error)
-      next(error)
+      next(error);
     }
   }
-)
+);
 
 router.get(
   '/findFirst',
@@ -93,24 +107,37 @@ router.get(
 )
 
 router.patch(
-  '/:name/status',
+  '/:id/status',
   passport.authenticate('jwt', { session: false }),
   async (req: JwtRequestType, res, next) => {
     try {
-      const { name } = req.params;
+      const { id } = req.params;
       const { status } = req.body;
 
       if (!status) {
-          return res.status(400).json({ error: 'Status is required' });
+        return res.status(400).json({ error: 'Status is required' });
       }
 
-      const updatedHomework = await service.changeStatus(name, status);
+      const updatedHomework = await service.updateStatus(id, status);
 
       res.status(200).json(updatedHomework);
     } catch (error) {
-        next(error);
+      next(error);
     }
   }
-)
+);
+
+router.delete(
+  '/',
+  passport.authenticate('jwt', { session: false }),
+  async (req: JwtRequestType, res, next) => {
+    try {
+      await service.deleteAllHomeworks();
+      res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 export default router

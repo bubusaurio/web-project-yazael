@@ -45,6 +45,15 @@ class HomeworkService {
         return homeworks[0]
     }
 
+    async deleteAllHomeworks() {
+        try {
+          const result = await Homeworks.deleteMany();
+          return result;
+        } catch (error) {
+          throw new Error('Error deleting homeworks');
+        }
+    }
+
 
     async findById(id: string) {
         const homework = await Homeworks.findById(id).catch((error) => {
@@ -68,26 +77,33 @@ class HomeworkService {
         }
     }
 
-    async changeStatus(name: string, status: string){
-        const homework = await Homeworks.findOne({ name }).catch((error) => {
-            console.log('Error while connecting to the DB', error);
-        });
-
-        if (!homework) {
-            throw boom.notFound('Homework not found');
+    async updateStatus(id: string, status: string): Promise<any> {
+        try {
+          const updatedHomework = await Homeworks.findByIdAndUpdate(
+            id,
+            { status },
+            { new: true }
+          );
+    
+          if (!updatedHomework) {
+            throw new Error('Homework not found');
+          }
+    
+          return updatedHomework;
+        } catch (error) {
+          throw new Error(`Error updating homework status: ${error.message}`);
         }
-
-        // Update the status of the homework
-        homework.status = status;
-
-        // Save the updated homework
-        const updatedHomework = await homework.save().catch((error) => {
-            console.log('Error while updating the homework', error);
-            throw boom.badImplementation('Error while updating the homework');
-        });
-
-        return updatedHomework;
     }
+
+    async findByUser(userId: ObjectId): Promise<any[]> {
+        try {
+          const homeworks = await Homeworks.find({ user: userId }).populate('user');
+    
+          return homeworks;
+        } catch (error) {
+          throw new Error(`Error fetching homeworks: ${error.message}`);
+        }
+      }
 }
 
 
